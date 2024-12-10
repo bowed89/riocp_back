@@ -125,7 +125,7 @@ class CertificadoRiocpService
             // nuevo certificado APROBADO = 1
             $certificado->estados_riocp_id = 1;
             $certificado->save();
-            
+
             // almaceno nota
             $request['certificado_riocp_id'] = $certificado->id;
             $notasRiocp->almacenarNota($request);
@@ -142,7 +142,7 @@ class CertificadoRiocpService
         } else {
             // nuevo certificado RECHAZADO = 2
             $certificado->estados_riocp_id = 2;
-            $certificado->nro_solicitud = 0;
+            $certificado->nro_solicitud = null;
             $certificado->save();
 
             // cambio de estado mi solicitud RECHAZADO = 2
@@ -169,6 +169,7 @@ class CertificadoRiocpService
     {
         $notasRiocp = new NotaRiocpService();
         $solicitud = Solicitud::where('id', $request['solicitud_id'])->first();
+
         if (!$solicitud) {
             return [
                 'status' => false,
@@ -176,19 +177,12 @@ class CertificadoRiocpService
             ];
         }
 
-        // este es el formulario 1
-        $solicitudRiocp = SolicitudRiocp::where('solicitud_id', $request['solicitud_id'])
-            ->first();
-
-        if (!$solicitudRiocp) {
-            return [
-                'status' => false,
-                'message' => 'No existe el formulario de solicitud RIOCP con el número de solicitud.'
-            ];
-        }
-
         $certificado = new CertificadoRiocp();
         $certificado->fill($request);
+
+        // cambio de estado mi solicitud OBSERVADO = 4
+        $solicitud->estado_solicitud_id = 4;
+        $solicitud->save();
 
         // nuevo certificado OBSERVADO = 3
         $certificado->estados_riocp_id = 3;

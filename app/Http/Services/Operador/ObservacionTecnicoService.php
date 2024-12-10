@@ -25,8 +25,6 @@ class ObservacionTecnicoService
             ];
         }
 
-        Log::debug("request==>" . $request);
-
         // Obtengo el id de la solicitud incompleta del usuario
         $solicitud = Solicitud::where('id', $request->solicitud_id)
             ->where('estado_solicitud_id', 1) // 1 es incompleto
@@ -70,9 +68,10 @@ class ObservacionTecnicoService
         // Actualizo segumiento y agrego nuevo seguimiento para el siguiente rol
         $this->asignarSeguimiento($request, $user);
 
-        // Tiene observacion
+        // Tiene observaciones
         if ($request['esObservado']) {
             $certificadoRiocpService->guardarObservado($request);
+
         } else {
             // Almaceno REGISTRO CERTIFICADO APROBADO O RECHAZADO
             $certificadoRiocpService->guardarAprobadoRechazado($request);

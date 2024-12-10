@@ -9,7 +9,7 @@ use App\Http\Services\Utils\GenerarNotasRiocp;
 use App\Models\NotaCertificadoRiocp;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use stdClass;
+use stdClass; 
 
 class NotaRiocpService
 {
@@ -19,15 +19,11 @@ class NotaRiocpService
         $almacenarNota = new NotaCertificadoRiocp();
         //$almacenarNota->fill($request);
         $almacenarNota->fill($request->all());
-
         $almacenarNota->save();
     }
 
     public function verNotaRechazo($solicitudId, $sd, $vpd)
     {
-        $servicioDeuda = new ServicioDeudaService();
-        $valorPresenteDeudaService = new ValorPresenteDeudaService();
-
         $user = Auth::user();
 
         if (!$user) {
