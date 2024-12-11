@@ -16,6 +16,10 @@ class ObservacionTecnicoService
 {
     public function guardarObservaciones($request)
     {
+
+        Log::debug('REQUEST: ' . json_encode($request->all()));
+
+
         $certificadoRiocpService = new CertificadoRiocpService();
         $user = Auth::user();
         if (!$user) {
@@ -70,9 +74,10 @@ class ObservacionTecnicoService
 
         // Tiene observaciones
         if ($request['esObservado']) {
+            Log::debug('entraa esObservado');
             $certificadoRiocpService->guardarObservado($request);
-
         } else {
+            Log::debug('no entraa esObservado');
             // Almaceno REGISTRO CERTIFICADO APROBADO O RECHAZADO
             $certificadoRiocpService->guardarAprobadoRechazado($request);
         }

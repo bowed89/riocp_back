@@ -9,7 +9,7 @@ use App\Models\SolicitudRiocp;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Log;
 
 class CertificadoRiocpService
 {
@@ -78,43 +78,25 @@ class CertificadoRiocpService
     // GUARDAR CERTIFICADO RIOCP APROBADO
     public function guardarAprobadoRechazado($request)
     {
+        Log::debug("guardarAprobadoRechazado");
         $notasRiocp = new NotaRiocpService();
         $nroSolicitudRepetida = CertificadoRiocp::where('nro_solicitud', $request['nro_solicitud'])->first();
 
-        if ($nroSolicitudRepetida) {
-            return [
-                'status' => false,
-                'message' => 'Existe un número de solicitud similar que se almaceno anteriormente.'
-            ];
-        }
-
         $solicitud = Solicitud::where('id', $request['solicitud_id'])->first();
-        if (!$solicitud) {
-            return [
-                'status' => false,
-                'message' => 'No existe la solicitud requerida.'
-            ];
-        }
+
 
         // este es el formulario 1
         $solicitudRiocp = SolicitudRiocp::where('solicitud_id', $request['solicitud_id'])
             ->first();
 
-        if (!$solicitudRiocp) {
-            return [
-                'status' => false,
-                'message' => 'No existe el formulario de solicitud RIOCP con el número de solicitud.'
-            ];
-        }
+        Log::debug("solicitudRiocp" . $solicitudRiocp);
+
         // verifico si estoy dentro de rangos de 
         // Servicio Deuda y Valor Presente Deuda Total
-        $servicioDeuda = $request['servicio_deuda'];
+        $servicioDeuda = $request->servicio_deuda;
         $servicioDeuda = (float) $servicioDeuda;
-        $valorPresenteDeuda = $request['valor_presente_deuda_total'];
+        $valorPresenteDeuda = $request->valor_presente_deuda_total;
         $valorPresenteDeuda = (float) $valorPresenteDeuda;
-
-        $certificado = new CertificadoRiocp();
-        $certificado->fill($request->all());
 
         // actualizo el campo objeto_operacion... de la tabla solicitud riocp,
         // en caso de q se quiera corregir la tabla solicitada
@@ -122,8 +104,11 @@ class CertificadoRiocpService
         $solicitudRiocp->save();
 
         if ($servicioDeuda <= 20.00 && $valorPresenteDeuda <= 200.00) {
+            Log::debug("ESTA DENTRO DE LOS RANGOS!!!");
             // nuevo certificado APROBADO = 1
+            $certificado = new CertificadoRiocp();
             $certificado->estados_riocp_id = 1;
+            $certificado->fill($request->all());
             $certificado->save();
 
             // almaceno nota
@@ -134,15 +119,19 @@ class CertificadoRiocpService
             $solicitud->estado_solicitud_id = 3;
             $solicitud->save();
 
-
             return [
                 'status' => true,
                 'message' => 'Certificado almacenado correctamente con valores de Servicio Deuda y Valor Presente Deuda Total dentro de los rangos.'
             ];
         } else {
+            Log::debug("NOOO ESTA DENTRO DE LOS RANGOS!!!");
+
             // nuevo certificado RECHAZADO = 2
+            $certificado = new CertificadoRiocp();
             $certificado->estados_riocp_id = 2;
+            $certificado->fill($request->all());
             $certificado->nro_solicitud = null;
+
             $certificado->save();
 
             // cambio de estado mi solicitud RECHAZADO = 2
@@ -150,7 +139,7 @@ class CertificadoRiocpService
             $solicitud->save();
 
             // almaceno nota
-            $request->certificado_riocp_id = $certificado->id;
+            $request['certificado_riocp_id'] = $certificado->id;
             $notasRiocp->almacenarNota($request);
 
             return [
@@ -167,18 +156,14 @@ class CertificadoRiocpService
 
     public function guardarObservado($request)
     {
+        Log::debug("guardarObservado");
+
         $notasRiocp = new NotaRiocpService();
         $solicitud = Solicitud::where('id', $request['solicitud_id'])->first();
 
-        if (!$solicitud) {
-            return [
-                'status' => false,
-                'message' => 'No existe la solicitud requerida.'
-            ];
-        }
-
         $certificado = new CertificadoRiocp();
-        $certificado->fill($request);
+        $certificado->fill($request->all());
+        $certificado->nro_solicitud = null;
 
         // cambio de estado mi solicitud OBSERVADO = 4
         $solicitud->estado_solicitud_id = 4;
@@ -190,8 +175,10 @@ class CertificadoRiocpService
         $certificado->servicio_deuda = null;
         $certificado->valor_presente_deuda_total = null;
 
+        $certificado->save();
+
         // almaceno nota
-        $request->certificado_riocp_id = $certificado->id;
+        $request['certificado_riocp_id'] = $certificado->id;
         $notasRiocp->almacenarNota($request);
     }
 
