@@ -17,6 +17,9 @@ class NotaCertificadoRiocp extends Model
         'body',
         'remitente',
         'revisado',
-        'certificado_riocp_id'
+        'certificado_riocp_id',
+        'usuario_id',
+        'rol_id'
+
     ];
 }

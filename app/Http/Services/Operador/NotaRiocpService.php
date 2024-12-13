@@ -14,11 +14,13 @@ use stdClass;
 class NotaRiocpService
 {
     // GUARDO CERTIFICADO RIOCP NO APROBADO
-    public function almacenarNota($request)
+    public function almacenarNota($request, $user)
     {
         $almacenarNota = new NotaCertificadoRiocp();
         //$almacenarNota->fill($request);
         $almacenarNota->fill($request->all());
+        $almacenarNota->usuario_id = $user->id;
+        $almacenarNota->rol_id = $user->rol_id;
         $almacenarNota->save();
     }
 

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->text('body');
             $table->text('remitente');
             $table->text('revisado');
+            $table->foreignId('usuario_id')->constrained('usuarios')->onDelete('cascade');
+            $table->foreignId('rol_id')->constrained('roles')->onDelete('cascade');
             $table->foreignId('certificado_riocp_id')->nullable()->constrained('certificados_riocp')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();

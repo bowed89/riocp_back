@@ -4,12 +4,14 @@ namespace App\Http\Services\Revisor;
 
 use App\Events\Notificaciones;
 use App\Http\Queries\JefeUnidadQuery;
+use App\Http\Services\Operador\CertificadoRiocpService;
 use App\Models\Observacion;
 use App\Models\Seguimientos;
 use App\Models\Solicitud;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SeguimientoRevisorService
 {
@@ -77,6 +79,8 @@ class SeguimientoRevisorService
 
     public function asignarRevisora($data)
     {
+        $certificadoRiocpService = new CertificadoRiocpService();
+
         $user = Auth::user();
         if (!$user) {
             return [
@@ -89,7 +93,6 @@ class SeguimientoRevisorService
         }
 
         $solicitud = Solicitud::where('id', $data['solicitud_id'])->first();
-
         if (!$solicitud) {
             return [
                 'status' => 400,
@@ -99,6 +102,7 @@ class SeguimientoRevisorService
                 ]
             ];
         }
+
         // actualizar seguimiento de jefe de unidad a revisor
         $seguimientoOrigen = Seguimientos::where('id', $data['id_seguimiento'])->first();
 
@@ -117,10 +121,52 @@ class SeguimientoRevisorService
         $seguimientoOrigen->fecha_derivacion = Carbon::now();
         $seguimientoOrigen->save();
 
+
+        // Actualizo segumiento y agrego nuevo seguimiento para el siguiente rol
+        $this->asignarSeguimiento($data, $user);
+
+        // Agregar observaciones
+        foreach ($data['observaciones'] as $observacion) {
+            $newObservacion = new Observacion();
+            $newObservacion->cumple = $observacion['cumple'];
+            $newObservacion->observacion = $observacion['observacion'];
+            $newObservacion->tipo_observacion_id = $observacion['tipo_observacion_id'];
+            $newObservacion->solicitud_id = $solicitud->id;
+            $newObservacion->usuario_id = $user->id;
+            $newObservacion->rol_id = $user->rol_id;
+            $newObservacion->save();
+        }
+
+        // ASIGNO LOS CERTIFICADOS RIOCPS CON SUS NOTAS...
+        // tiene observacion
+        if ($data['esObservado']) {
+            Log::debug('entraa esObservado');
+            $certificadoRiocpService->guardarObservado($data, $user);
+        } else {
+            Log::debug('no entraa esObservado');
+            // Almaceno REGISTRO CERTIFICADO APROBADO O RECHAZADO
+            $certificadoRiocpService->guardarAprobadoRechazado($data, $user);
+        }
+
+
+        // Event para notificaciones de nuevos tramites
+        $this->emitNotificacion($user);
+
+        return [
+            'status' => 200,
+            'data' => [
+                'status' => true,
+                'message' => 'Seguimiento registrado.'
+            ]
+        ];
+    }
+
+    private function asignarSeguimiento($data, $user)
+    {
         // Agregar seguimiento para la próxima unidad
         $seguimientoProximaUnidad = Seguimientos::where('solicitud_id', $data['solicitud_id'])
             ->where('usuario_origen_id', $user->id)
-            ->where('usuario_destino_id', $data['usuario_destino_id'])
+            ->where('usuario_destino_id', $data->usuario_destino_id)
             ->first();
 
         if ($seguimientoProximaUnidad) {
@@ -139,31 +185,6 @@ class SeguimientoRevisorService
         $seguimiento->usuario_destino_id = $data['usuario_destino_id'];
         $seguimiento->estado_derivado_id = 1;
         $seguimiento->save();
-
-        // Agregar observaciones
-        foreach ($data['observaciones'] as $observacion) {
-            $newObservacion = new Observacion();
-            $newObservacion->cumple = $observacion['cumple'];
-            $newObservacion->observacion = $observacion['observacion'];
-            $newObservacion->tipo_observacion_id = $observacion['tipo_observacion_id'];
-            $newObservacion->solicitud_id = $solicitud->id;
-            $newObservacion->usuario_id = $user->id;
-            $newObservacion->rol_id = $user->rol_id;
-            $newObservacion->save();
-        }
-
-
-        // Event para notificaciones de nuevos tramites
-        $this->emitNotificacion($user);
-
-        return [
-            'status' => 200,
-            'data' => [
-                'status' => true,
-                'message' => 'Seguimiento registrado.',
-                'data' => $seguimiento
-            ]
-        ];
     }
 
     private function emitNotificacion($user)

@@ -17,5 +17,7 @@ class CertificadoRiocp extends Model
         'valor_presente_deuda_total',
         'solicitud_id',
         'estados_riocp_id',
+        'solicitud_id',
+        'usuario_id'
     ];
 }

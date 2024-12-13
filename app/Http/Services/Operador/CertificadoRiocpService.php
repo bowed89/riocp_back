@@ -76,14 +76,20 @@ class CertificadoRiocpService
     }
 
     // GUARDAR CERTIFICADO RIOCP APROBADO
-    public function guardarAprobadoRechazado($request)
+    public function guardarAprobadoRechazado($request, $user)
     {
         Log::debug("guardarAprobadoRechazado");
         $notasRiocp = new NotaRiocpService();
         $nroSolicitudRepetida = CertificadoRiocp::where('nro_solicitud', $request['nro_solicitud'])->first();
 
-        $solicitud = Solicitud::where('id', $request['solicitud_id'])->first();
+        if ($nroSolicitudRepetida) {
+            return [
+                'status' => false,
+                'message' => 'Existe un  número de solicitud repetida.'
+            ];
+        }
 
+        $solicitud = Solicitud::where('id', $request['solicitud_id'])->first();
 
         // este es el formulario 1
         $solicitudRiocp = SolicitudRiocp::where('solicitud_id', $request['solicitud_id'])
@@ -109,15 +115,20 @@ class CertificadoRiocpService
             $certificado = new CertificadoRiocp();
             $certificado->estados_riocp_id = 1;
             $certificado->fill($request->all());
+            $certificado->usuario_id = $user->id;
+            $certificado->rol_id = $user->rol_id;
             $certificado->save();
 
             // almaceno nota
             $request['certificado_riocp_id'] = $certificado->id;
-            $notasRiocp->almacenarNota($request);
+            $notasRiocp->almacenarNota($request, $user);
 
             // cambio de estado mi solicitud FINALIZADO = 3
-            $solicitud->estado_solicitud_id = 3;
-            $solicitud->save();
+            //  en caso que sea rol REVISOR
+            if ($user->rol_id == 4) {
+                $solicitud->estado_solicitud_id = 3;
+                $solicitud->save();
+            }
 
             return [
                 'status' => true,
@@ -131,17 +142,20 @@ class CertificadoRiocpService
             $certificado->estados_riocp_id = 2;
             $certificado->fill($request->all());
             $certificado->nro_solicitud = null;
-
+            $certificado->usuario_id = $user->id;
+            $certificado->rol_id = $user->rol_id;
             $certificado->save();
 
             // cambio de estado mi solicitud RECHAZADO = 2
-            $solicitud->estado_solicitud_id = 2;
-            $solicitud->save();
+            //  en caso que sea rol REVISOR
+            if ($user->rol_id == 4) {
+                $solicitud->estado_solicitud_id = 2;
+                $solicitud->save();
+            }
 
             // almaceno nota
             $request['certificado_riocp_id'] = $certificado->id;
-            $notasRiocp->almacenarNota($request);
-
+            $notasRiocp->almacenarNota($request, $user);
             return [
                 'status' => true,
                 'message' => 'Certificado almacenado correctamente con valores de Servicio Deuda y Valor Presente Deuda Total fuera de los rangos.'
@@ -154,32 +168,36 @@ class CertificadoRiocpService
         ];
     }
 
-    public function guardarObservado($request)
+    public function guardarObservado($request, $user)
     {
         Log::debug("guardarObservado");
 
         $notasRiocp = new NotaRiocpService();
-        $solicitud = Solicitud::where('id', $request['solicitud_id'])->first();
 
         $certificado = new CertificadoRiocp();
         $certificado->fill($request->all());
         $certificado->nro_solicitud = null;
-
-        // cambio de estado mi solicitud OBSERVADO = 4
-        $solicitud->estado_solicitud_id = 4;
-        $solicitud->save();
 
         // nuevo certificado OBSERVADO = 3
         $certificado->estados_riocp_id = 3;
         $certificado->nro_solicitud = null;
         $certificado->servicio_deuda = null;
         $certificado->valor_presente_deuda_total = null;
-
+        $certificado->usuario_id = $user->id;
+        $certificado->rol_id = $user->rol_id;
         $certificado->save();
+
+        // cambio de estado mi solicitud OBSERVADO = 4
+        //  en caso que sea REVISOR
+        if ($user->rol_id == 4) {
+            $solicitud = Solicitud::where('id', $request['solicitud_id'])->first();
+            $solicitud->estado_solicitud_id = 4;
+            $solicitud->save();
+        }
 
         // almaceno nota
         $request['certificado_riocp_id'] = $certificado->id;
-        $notasRiocp->almacenarNota($request);
+        $notasRiocp->almacenarNota($request, $user);
     }
 
     //SERVICIO DE VALOR PRESENTE DE DEUDA TOTAL(LÍMITE 200%)

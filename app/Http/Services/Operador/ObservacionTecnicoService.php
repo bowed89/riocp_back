@@ -16,9 +16,7 @@ class ObservacionTecnicoService
 {
     public function guardarObservaciones($request)
     {
-
-        Log::debug('REQUEST: ' . json_encode($request->all()));
-
+        Log::debug('REQUEST +++: ' . json_encode($request->all()));
 
         $certificadoRiocpService = new CertificadoRiocpService();
         $user = Auth::user();
@@ -28,7 +26,6 @@ class ObservacionTecnicoService
                 'message' => 'Usuario no autorizado o sin rol asignado.'
             ];
         }
-
         // Obtengo el id de la solicitud incompleta del usuario
         $solicitud = Solicitud::where('id', $request->solicitud_id)
             ->where('estado_solicitud_id', 1) // 1 es incompleto
@@ -45,9 +42,12 @@ class ObservacionTecnicoService
         }
 
         // Verifico que no existan registros creados anteriormente
-        $observacionDuplicada = Observacion::where('solicitud_id', $solicitud->id)->first();
+        $observacionesDuplicadas = Observacion::where('solicitud_id', $solicitud->id)
+            ->where('usuario_id', $user->id)
+            ->where('rol_id', $user->rol_id)
+            ->get();
 
-        if ($observacionDuplicada) {
+        if ($observacionesDuplicadas->isNotEmpty()) {
             return [
                 'status' => 404,
                 'data' => [
@@ -56,6 +56,9 @@ class ObservacionTecnicoService
                 ]
             ];
         }
+
+        // Actualizo segumiento y agrego nuevo seguimiento para el siguiente rol
+        $this->asignarSeguimiento($request, $user);
 
         // registro las observaciones
         foreach ($request['observaciones'] as $observacion) {
@@ -69,17 +72,15 @@ class ObservacionTecnicoService
             $newObservacion->save();
         }
 
-        // Actualizo segumiento y agrego nuevo seguimiento para el siguiente rol
-        $this->asignarSeguimiento($request, $user);
-
-        // Tiene observaciones
+        // ASIGNO LOS CERTIFICADOS RIOCPS CON SUS NOTAS...
+        // tiene observacion
         if ($request['esObservado']) {
             Log::debug('entraa esObservado');
-            $certificadoRiocpService->guardarObservado($request);
+            $certificadoRiocpService->guardarObservado($request, $user);
         } else {
             Log::debug('no entraa esObservado');
             // Almaceno REGISTRO CERTIFICADO APROBADO O RECHAZADO
-            $certificadoRiocpService->guardarAprobadoRechazado($request);
+            $certificadoRiocpService->guardarAprobadoRechazado($request, $user);
         }
 
         // Event para notificaciones de nuevos tramites
@@ -124,6 +125,20 @@ class ObservacionTecnicoService
         $seguimientoOrigen->save();
 
         // agregar seguimiento para la proxima unidad
+
+        // Agregar seguimiento para la próxima unidad
+        $seguimientoProximaUnidad = Seguimientos::where('solicitud_id', $data['solicitud_id'])
+            ->where('usuario_origen_id', $user->id)
+            ->where('usuario_destino_id', $data->usuario_destino_id)
+            ->first();
+
+        if ($seguimientoProximaUnidad) {
+            return [
+                'status' => false,
+                'message' => 'Ya existe un seguimiento agregado a la próxima unidad.'
+            ];
+        }
+
         $seguimiento = new Seguimientos();
         $seguimiento->solicitud_id = $data['solicitud_id'];
         $seguimiento->usuario_origen_id = $user->id;
