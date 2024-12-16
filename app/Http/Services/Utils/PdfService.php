@@ -12,9 +12,13 @@ class PdfService
         return View::make('pdf.formulario1', compact('datos'))->render();
     }
 
+    public function generarNotaObservacionHtml($datos)
+    {
+        return View::make('pdf.notas.nota-observacion', compact('datos'))->render();
+    }
+
     public function generarPdf($html)
     {
-
         return Browsershot::html($html)
             ->setOption('args', ['--no-sandbox', '--disable-setuid-sandbox'])
             ->showBackground()

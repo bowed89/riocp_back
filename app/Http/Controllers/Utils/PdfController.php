@@ -19,11 +19,20 @@ class PdfController extends Controller
     {
         $datos = $request->all();
         $html = $this->pdfService->generarHtml($datos);
-        $pdfContent = $this->pdfService->generarPdf($html); 
-        
+        $pdfContent = $this->pdfService->generarPdf($html);
+
         // archivo PDF como una respuesta de descarga
         return response($pdfContent)
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'attachment; filename="formulario1.pdf"');
+    }
+
+    public function generarNotaObservacion(Request $request)
+    {
+        $datos = $request->all();
+        $html = $this->pdfService->generarNotaObservacionHtml($datos);
+
+        return response($html)
+            ->header('Content-Type', 'text/html');
     }
 }

@@ -82,7 +82,6 @@ class ObservacionTecnicoService
             // Almaceno REGISTRO CERTIFICADO APROBADO O RECHAZADO
             $certificadoRiocpService->guardarAprobadoRechazado($request, $user);
         }
-
         // Event para notificaciones de nuevos tramites
         $this->emitNotificacion($user);
 

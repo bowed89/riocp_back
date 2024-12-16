@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Dgaft\NotasDgaftController;
+use App\Http\Controllers\Dgaft\ObservacionDgaftController;
 use App\Http\Controllers\Utils\AcreedorController;
 use App\Http\Controllers\JefeUnidad\SeguimientoJefeUnidadController;
 use App\Http\Controllers\Excel\BalanceGeneralExcelController;
@@ -36,6 +38,9 @@ use App\Http\Controllers\Utils\AbrirDocumentoController;
 use App\Http\Controllers\Utils\CorreoController;
 use App\Http\Controllers\Utils\NotificacionesController;
 use App\Http\Controllers\Utils\PdfController;
+
+Route::post('/nota-observacion-view', [PdfController::class, 'generarNotaObservacion']);
+
 
 Route::post('auth/register', [AuthController::class, 'create']);
 Route::post('auth/login', [AuthController::class, 'login']);
@@ -121,15 +126,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/nota-aprobado-certificado-riocp/{solicitudId}', [NotaRiocpController::class, 'obtenerDatosNotaAprobacion']);
         Route::get('/nota-observacion-certificado-riocp/{solicitudId}', [NotaRiocpController::class, 'obtenerDatosNotaObervacion']);
         Route::get('/nota-rechazo-certificado-riocp/{solicitudId}/{sd}/{vpd}', [NotaRiocpController::class, 'obtenerDatosNotaRechazo']);
-    
     });
 
     // Revisor y Jefe Unidad
     Route::middleware('rol:4.2')->group(function () {
+        Route::get('usuario/revisor/{solicitudId}', [ObservacionRevisorController::class, 'verObservacionIdSolicitud']);
+
         Route::post('/seguimiento/revisor/store', [SeguimientoRevisorController::class, 'asignardeRevisoraJefeUnidad']);
         Route::resource('seguimiento/revisor/main', SeguimientoRevisorController::class);
         Route::get('usuario/jefe-unidad', [AuthController::class, 'getJefeUnidad']);
-        Route::get('usuario/revisor/{solicitudId}', [ObservacionRevisorController::class, 'verObservacionIdSolicitud']);
+       // Route::get('usuario/revisor/{solicitudId}', [ObservacionRevisorController::class, 'verObservacionIdSolicitud']);
 
         Route::post('/subir-historial/revisor', [SubirHistorialExcelController::class, 'subirDocumento']);
 
@@ -141,7 +147,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     // DGAFT y Administrador
-    Route::middleware('rol:5.2')->group(function () {});
+    Route::middleware('rol:5.4.2')->group(function () {
+        Route::get('usuario/dgaft/{solicitudId}', [ObservacionDgaftController::class, 'verObservacionIdSolicitud']);
+        Route::get('usuario/dgaft/notas-observacion/{solicitudId}', [NotasDgaftController::class, 'verNotasDgaft']);
+    });
 
     // todos roles
     Route::get('menu/rol/user', [MenuController::class, 'selectMenuByRol']);
@@ -160,6 +169,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('monedas/delete/{id}', [MonedaController::class, 'deleteMoneda']);
     Route::get('monedas/show/{id}', [MonedaController::class, 'showById']);
 
+    // generar pdfs y htmls notas, formularios, etc...
     Route::post('/generar-pdf', [PdfController::class, 'generarPDF'])->name('generar.pdf');
 
     // Notificaciones

@@ -89,7 +89,7 @@ class CertificadoRiocpService
             ];
         }
 
-        $solicitud = Solicitud::where('id', $request['solicitud_id'])->first();
+        //$solicitud = Solicitud::where('id', $request['solicitud_id'])->first();
 
         // este es el formulario 1
         $solicitudRiocp = SolicitudRiocp::where('solicitud_id', $request['solicitud_id'])
@@ -123,12 +123,12 @@ class CertificadoRiocpService
             $request['certificado_riocp_id'] = $certificado->id;
             $notasRiocp->almacenarNota($request, $user);
 
-            // cambio de estado mi solicitud FINALIZADO = 3
+            //  cambio de estado a mi solicitud FINALIZADO = 3
             //  en caso que sea rol REVISOR
-            if ($user->rol_id == 4) {
+            /* if ($user->rol_id == 4) {
                 $solicitud->estado_solicitud_id = 3;
                 $solicitud->save();
-            }
+            } */
 
             return [
                 'status' => true,
@@ -148,11 +148,12 @@ class CertificadoRiocpService
 
             // cambio de estado mi solicitud RECHAZADO = 2
             //  en caso que sea rol REVISOR
-            if ($user->rol_id == 4) {
+            /*  if ($user->rol_id == 4) {
                 $solicitud->estado_solicitud_id = 2;
                 $solicitud->save();
             }
-
+            */
+            
             // almaceno nota
             $request['certificado_riocp_id'] = $certificado->id;
             $notasRiocp->almacenarNota($request, $user);
@@ -189,11 +190,11 @@ class CertificadoRiocpService
 
         // cambio de estado mi solicitud OBSERVADO = 4
         //  en caso que sea REVISOR
-        if ($user->rol_id == 4) {
+        /* if ($user->rol_id == 4) {
             $solicitud = Solicitud::where('id', $request['solicitud_id'])->first();
             $solicitud->estado_solicitud_id = 4;
             $solicitud->save();
-        }
+        } */
 
         // almaceno nota
         $request['certificado_riocp_id'] = $certificado->id;
