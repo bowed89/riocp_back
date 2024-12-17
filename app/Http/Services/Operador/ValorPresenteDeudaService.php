@@ -124,6 +124,7 @@ class  ValorPresenteDeudaService
 
         return $resultadoTotalDeudaExterna;
     }
+    
     /***************************************************************
         HALLAMOS  VP DEL ARCHIVO 
         INFORMACION DEUDA ENTIDADES  TERRITORIALES AUTONOMAS .XLS
@@ -256,7 +257,7 @@ class  ValorPresenteDeudaService
         $deudaCreditoExterno = $valorPresenteDeuda->sumatoriaDeudaCreditoExterno($tasa, $codigo_entidad);
 
 
-        Log::debug("deudaCreditoExterno" . $deudaCreditoExterno);
+        Log::debug("" . $deudaCreditoExterno);
 
         $deudaCreditoTerritoriales = $valorPresenteDeuda->sumatoriaDeudaTerritoriales($tasa, $codigo_entidad);
 

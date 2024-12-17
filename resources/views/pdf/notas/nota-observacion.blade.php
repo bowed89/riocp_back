@@ -38,6 +38,7 @@
             line-height: 1.5;
             color: #000;
             background-color: #f5f5f5;
+
         }
 
         /* Contenedor principal */
@@ -87,7 +88,7 @@
         }
 
         /* Contenido del cuerpo */
-        .body p {
+        .body {
             text-align: justify;
             margin-bottom: 10px;
         }
@@ -115,9 +116,9 @@
 
 <body>
     <div class="document-container">
-        
-        {{ $datos['nombre'] ?? '' }}
-        
+
+
+
         <!-- Encabezado -->
         <div class="header">
             <p class="location">La Paz,dfdfdfd</p>
@@ -140,30 +141,9 @@
 
         <!-- Contenido -->
         <div class="body">
-            <p>De mi consideración:</p>
-            <p>
-                Hago referencia a nota DIRECCIÓN GENERAL MUNICIPAL OF. N°3323/2024, relacionada a su solicitud de
-                certificado de Registro de Inicio de Operaciones de Crédito Público (RIOCP).
-            </p>
-            <p>
-                Al respecto, una vez analizada la información financiera en el marco de la Resolución Ministerial N°338
-                de 29 de septiembre de 2022, que aprueba el <em>"Reglamento Específico para el Registro de Inicio de
-                    Operaciones de Crédito Público para Proyectos de Inversión Pública"</em>, modificado mediante
-                Resolución Ministerial N° 006 de 10 de enero de 2024, adjunto <u>a la presente remito</u> a usted el
-                detalle de observaciones que impiden el procesamiento del trámite de referencia.
-            </p>
-            <p>
-                Asimismo, es menester recordarle que conforme lo dispuesto en el Parágrafo II, Artículo 4 del Reglamento
-                mencionado precedentemente, cualquier inconsistencia que derive en la demora de la emisión del resultado
-                correspondiente al RIOCP, es responsabilidad de la Máxima Autoridad Ejecutiva de la Entidad Solicitante
-                del certificado de RIOCP para la operación de crédito público.
-            </p>
-            <p>
-                Finalmente, el Gobierno Autónomo Municipal de Santa Cruz de la Sierra estará habilitado para efectuar la
-                operación de crédito público, una vez que el Viceministerio del Tesoro y Crédito Público emita el
-                resultado de la solicitud realizada.
-            </p>
-            <p>Con este motivo, saludo a usted atentamente.</p>
+            {{-- {{ $datos['body'] ?? '' }} --}}
+            {!! $datos['body'] ?? '' !!}
+
         </div>
 
         <!-- Pie de página -->

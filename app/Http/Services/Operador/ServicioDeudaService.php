@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Services\Operador;
+
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -8,7 +9,7 @@ class ServicioDeudaService
 {
     //SERVICIO DE LA DEUDA(LÍMITE 20%)
     public function obtenerServicioDeuda($codigo_entidad)
-    {        
+    {
         $anioActual = Carbon::now()->year;
 
         $sumCapInteres = DB::table('fndr_excel')

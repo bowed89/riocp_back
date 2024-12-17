@@ -59,6 +59,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::resource('menu', MenuController::class);
         Route::resource('usuarios', AuthController::class);
     });
+    
     // jefe unidad
     Route::middleware('rol:2')->group(function () {
         Route::get('usuario/tecnico', [AuthController::class, 'getTecnicos']);

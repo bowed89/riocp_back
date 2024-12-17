@@ -24,7 +24,7 @@ class NotasDgaftService
 
         $solicitud = Solicitud::where('id', $solicitudId)
             ->first();
-
+            
         if (!$solicitud) {
             return [
                 'status' => 401,
