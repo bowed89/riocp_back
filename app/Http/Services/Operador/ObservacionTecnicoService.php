@@ -19,6 +19,7 @@ class ObservacionTecnicoService
         Log::debug('REQUEST +++: ' . json_encode($request->all()));
 
         $certificadoRiocpService = new CertificadoRiocpService();
+
         $user = Auth::user();
         if (!$user) {
             return [
@@ -82,6 +83,20 @@ class ObservacionTecnicoService
             // Almaceno REGISTRO CERTIFICADO APROBADO O RECHAZADO
             $certificadoRiocpService->guardarAprobadoRechazado($request, $user);
         }
+
+        // actualizar el estado de requisitos y agregar nro de hoja de ruta
+        $actualizarSolicitud = Solicitud::where('id', $request['solicitud_id'])->first();
+
+        if (!$actualizarSolicitud) {
+            return [
+                'status' => false,
+                'message' => 'No existe una solicitud.'
+            ];
+        }
+        $actualizarSolicitud->nro_hoja_ruta = $request['nro_hoja_ruta'];
+        $actualizarSolicitud->estado_requisito_id = 2;
+        $actualizarSolicitud->save();
+
         // Event para notificaciones de nuevos tramites
         $this->emitNotificacion($user);
 
@@ -108,7 +123,7 @@ class ObservacionTecnicoService
 
     private function asignarSeguimiento($data, $user)
     {
-        // actualizar seguimiento 
+        // actualizar seguimiento
         $seguimientoOrigen = Seguimientos::where('id', $data->id_seguimiento)->first();
 
         if (!$seguimientoOrigen) {

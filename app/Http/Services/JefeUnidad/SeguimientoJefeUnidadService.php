@@ -76,16 +76,19 @@ class SeguimientoJefeUnidadService
         $seguimientoOrigen->fecha_derivacion = Carbon::now();
         $seguimientoOrigen->save();
 
-        // Verificar el tipo de rol del usuario por el seguimiento de usuario_origen_id 
-        $usuarioOrigen = Usuario::where('id', $seguimientoOrigen->usuario_origen_id)->first();
+
+        // Verificar el tipo de rol del usuario por el seguimiento de usuario_origen_id
+        /* $usuarioOrigen = Usuario::where('id', $seguimientoOrigen->usuario_origen_id)->first();
 
         // entidad solicitante
         if ($usuarioOrigen->rol_id == 1) {
-            // actualizar solicitud 
+            // actualizar solicitud
             $solicitud->nro_hoja_ruta = $data['nro_hoja_ruta'];
             $solicitud->estado_requisito_id = 2;
             $solicitud->save();
-        }
+        } */
+
+
         // agregar seguimiento para la proxima unidad:: tecnico o DGAFT
         $seguimientoProximaUnidad = Seguimientos::where('solicitud_id', $solicitud->id)
             ->where('usuario_origen_id', $user->id)
