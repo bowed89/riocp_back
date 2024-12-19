@@ -38,6 +38,7 @@ use App\Http\Controllers\Utils\AbrirDocumentoController;
 use App\Http\Controllers\Utils\CorreoController;
 use App\Http\Controllers\Utils\NotificacionesController;
 use App\Http\Controllers\Utils\PdfController;
+use App\Http\Controllers\Utils\TipoErroresRevisionController;
 
 Route::post('/nota-observacion-view', [PdfController::class, 'generarNotaObservacion']);
 
@@ -59,7 +60,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::resource('menu', MenuController::class);
         Route::resource('usuarios', AuthController::class);
     });
-    
+
     // jefe unidad
     Route::middleware('rol:2')->group(function () {
         Route::get('usuario/tecnico', [AuthController::class, 'getTecnicos']);
@@ -127,6 +128,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/nota-aprobado-certificado-riocp/{solicitudId}', [NotaRiocpController::class, 'obtenerDatosNotaAprobacion']);
         Route::get('/nota-observacion-certificado-riocp/{solicitudId}', [NotaRiocpController::class, 'obtenerDatosNotaObervacion']);
         Route::get('/nota-rechazo-certificado-riocp/{solicitudId}/{sd}/{vpd}', [NotaRiocpController::class, 'obtenerDatosNotaRechazo']);
+            
+        Route::resource('tipo-errores', TipoErroresRevisionController::class);
+
     });
 
     // Revisor y Jefe Unidad

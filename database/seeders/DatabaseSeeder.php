@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call(TipoDocumentoAdjuntoSeeder::class);
         $this->call(PeriodoSeeder::class);
         $this->call(TipoSolicitudSeeder::class);
+        $this->call(TipoErroresRevisionSeeder::class);
         $this->call(EstadoRequisitoSeeder::class);
         $this->call(EstadoSolicitudSeeder::class);
         $this->call(EntidadSeeder::class);

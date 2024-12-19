@@ -4,6 +4,7 @@ namespace App\Http\Services\Operador;
 
 use App\Events\Notificaciones;
 use App\Http\Queries\JefeUnidadQuery;
+use App\Models\ErroresRevision;
 use App\Models\Observacion;
 use App\Models\Seguimientos;
 use App\Models\Solicitud;
@@ -84,6 +85,21 @@ class ObservacionTecnicoService
             $certificadoRiocpService->guardarAprobadoRechazado($request, $user);
         }
 
+        // agrego errores de revision si existe
+        if ($request['tieneErrores']) {
+            // obtengo el id_usuario del tecnico que reviso anteriormente 
+            $usuarioTecnicoRevisor = Seguimientos::where('id', $request->id_seguimiento)
+                ->first();
+
+            $erroresRevision = new ErroresRevision();
+            $erroresRevision->comentario = $request['comentario'];
+            $erroresRevision->usuario_revisor_id = $user->rol_id;
+            $erroresRevision->usuario_error_id = $usuarioTecnicoRevisor->usuario_origen_id;
+            $erroresRevision->solicitud_id = $solicitud->id;
+            $erroresRevision->tipo_error_id = $request['tipo_error_id'];
+            $erroresRevision->save();
+        }
+
         // actualizar el estado de requisitos y agregar nro de hoja de ruta
         $actualizarSolicitud = Solicitud::where('id', $request['solicitud_id'])->first();
 
@@ -93,6 +109,7 @@ class ObservacionTecnicoService
                 'message' => 'No existe una solicitud.'
             ];
         }
+
         $actualizarSolicitud->nro_hoja_ruta = $request['nro_hoja_ruta'];
         $actualizarSolicitud->estado_requisito_id = 2;
         $actualizarSolicitud->save();
