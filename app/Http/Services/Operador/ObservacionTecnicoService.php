@@ -85,34 +85,29 @@ class ObservacionTecnicoService
             $certificadoRiocpService->guardarAprobadoRechazado($request, $user);
         }
 
-        // agrego errores de revision si existe
+        // agrego errores de revision, si existe
         if ($request['tieneErrores']) {
-            // obtengo el id_usuario del tecnico que reviso anteriormente 
-            $usuarioTecnicoRevisor = Seguimientos::where('id', $request->id_seguimiento)
-                ->first();
-
-            $erroresRevision = new ErroresRevision();
-            $erroresRevision->comentario = $request['comentario'];
-            $erroresRevision->usuario_revisor_id = $user->rol_id;
-            $erroresRevision->usuario_error_id = $usuarioTecnicoRevisor->usuario_origen_id;
-            $erroresRevision->solicitud_id = $solicitud->id;
-            $erroresRevision->tipo_error_id = $request['tipo_error_id'];
-            $erroresRevision->save();
+            $this->tipoErrores($request, $user, $solicitud);
         }
 
         // actualizar el estado de requisitos y agregar nro de hoja de ruta
-        $actualizarSolicitud = Solicitud::where('id', $request['solicitud_id'])->first();
+        // en caso de ser operador(tecnico)
+        if ($user->rol_id == 3) {
+            $actualizarSolicitud = Solicitud::where('id', $request['solicitud_id'])->first();
 
-        if (!$actualizarSolicitud) {
-            return [
-                'status' => false,
-                'message' => 'No existe una solicitud.'
-            ];
+            if (!$actualizarSolicitud) {
+                return [
+                    'status' => false,
+                    'message' => 'No existe una solicitud.'
+                ];
+            }
+
+            $actualizarSolicitud->nro_hoja_ruta = $request['nro_hoja_ruta'];
+            $actualizarSolicitud->estado_requisito_id = 2;
+            $actualizarSolicitud->save();
         }
 
-        $actualizarSolicitud->nro_hoja_ruta = $request['nro_hoja_ruta'];
-        $actualizarSolicitud->estado_requisito_id = 2;
-        $actualizarSolicitud->save();
+
 
         // Event para notificaciones de nuevos tramites
         $this->emitNotificacion($user);
@@ -154,8 +149,6 @@ class ObservacionTecnicoService
         $seguimientoOrigen->observacion = $data['observacion'];
         $seguimientoOrigen->fecha_derivacion = Carbon::now();
         $seguimientoOrigen->save();
-
-        // agregar seguimiento para la proxima unidad
 
         // Agregar seguimiento para la próxima unidad
         $seguimientoProximaUnidad = Seguimientos::where('solicitud_id', $data['solicitud_id'])
@@ -211,5 +204,20 @@ class ObservacionTecnicoService
                 'data' => $tipoObservaciones,
             ]
         ];
+    }
+
+    private function tipoErrores($request, $user, $solicitud)
+    {
+        // obtengo el id_usuario del tecnico que reviso anteriormente 
+        $usuarioTecnicoRevisor = Seguimientos::where('id', $request->id_seguimiento)
+            ->first();
+
+        $erroresRevision = new ErroresRevision();
+        $erroresRevision->comentario = $request['comentario'];
+        $erroresRevision->usuario_revisor_id = $user->id;
+        $erroresRevision->usuario_error_id = $usuarioTecnicoRevisor->usuario_origen_id;
+        $erroresRevision->solicitud_id = $solicitud->id;
+        $erroresRevision->tipo_error_id = $request['tipo_error_id'];
+        $erroresRevision->save();
     }
 }
