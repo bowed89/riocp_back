@@ -17,8 +17,6 @@ class ObservacionTecnicoService
 {
     public function guardarObservaciones($request)
     {
-        Log::debug('REQUEST +++: ' . json_encode($request->all()));
-
         $certificadoRiocpService = new CertificadoRiocpService();
 
         $user = Auth::user();
@@ -106,8 +104,6 @@ class ObservacionTecnicoService
             $actualizarSolicitud->estado_requisito_id = 2;
             $actualizarSolicitud->save();
         }
-
-
 
         // Event para notificaciones de nuevos tramites
         $this->emitNotificacion($user);
