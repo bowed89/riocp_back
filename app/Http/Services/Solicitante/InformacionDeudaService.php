@@ -15,7 +15,7 @@ class InformacionDeudaService
         $user = Auth::user();
 
         if ($user) {
-            // obtengo el id de la solicitud incompleta del usuario 
+            // obtengo el id de la solicitud incompleta del usuario
             $solicitud = Solicitud::where('usuario_id', $user->id)
                 ->where('estado_requisito_id', 1) // 1 es incompleto
                 ->first();
@@ -96,7 +96,7 @@ class InformacionDeudaService
     protected function updateMenu($solicitud, $informacion)
     {
         $menu = MenuPestaniasSolicitante::where('solicitud_id', $solicitud->id)->first();
-        $menu->sigep_anexo = false;
+        // $menu->sigep_anexo = false;
         $menu->formulario_2 = true;
         // $menu->registro = false;
 

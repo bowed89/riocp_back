@@ -94,7 +94,7 @@ class FormularioCorrespondenciaController extends Controller
         $user = Auth::user();
 
         if ($user) {
-            // obtengo el id de la solicitud incompleta del usuario 
+            // obtengo el id de la solicitud incompleta del usuario
             $solicitud = Solicitud::where('usuario_id', $user->id)
                 ->where('estado_requisito_id', 1) // 1 es incompleto
                 ->first();
@@ -179,14 +179,13 @@ class FormularioCorrespondenciaController extends Controller
             $solicitud->nro_solicitud = $numeroGenerado;
             $solicitud->save();
 
-            // Actualizo mi menu pestania 
+            // Actualizo mi menu pestania
             $menu = MenuPestaniasSolicitante::where('solicitud_id', $solicitud->id)->first();
             $menu->formulario_1 = true;
             $menu->formulario_2 = true;
             $menu->formulario_3 = true;
             $menu->formulario_4 = true;
             $menu->formulario_1_anexo = true;
-            $menu->sigep_anexo = true;
             $menu->registro = true;
 
             $menu->save();

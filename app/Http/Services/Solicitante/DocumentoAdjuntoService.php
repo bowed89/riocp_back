@@ -22,7 +22,7 @@ class DocumentoAdjuntoService
             ];
         }
 
-        // obtengo el id de la solicitud incompleta del usuario 
+        // obtengo el id de la solicitud incompleta del usuario
         $solicitud = Solicitud::where('usuario_id', $user->id)
             ->where('estado_requisito_id', 1)
             ->first();
@@ -34,7 +34,7 @@ class DocumentoAdjuntoService
             ];
         }
 
-        // verifico que no exista un documento creado anteriormente con la misma solicitud_id 
+        // verifico que no exista un documento creado anteriormente con la misma solicitud_id
         $anexos_duplicados = DocumentoAdjunto::where('solicitud_id', $solicitud->id)
             ->whereIn('tipo_documento_id', [1, 2])
             ->get();
@@ -88,8 +88,8 @@ class DocumentoAdjuntoService
                 'code' => 403
             ];
         }
-        
-        // obtengo el id de la solicitud incompleta del usuario 
+
+        // obtengo el id de la solicitud incompleta del usuario
         $solicitud = Solicitud::where('usuario_id', $user->id)
             ->where('estado_requisito_id', 1)
             ->first();
@@ -118,10 +118,10 @@ class DocumentoAdjuntoService
         // Procesar subida de archivo
         $this->uploadDocument($data['documento'], $solicitud, $tipoDocumentoId, $user, $folder);
 
-        if($tipoDocumentoId == 3) {
+        /* if($tipoDocumentoId == 3) {
             $this->updateMenu($solicitud, 'form-3');
-        }
-        
+        } */
+
         return [
             'status' => true,
             'message' => 'Documento adjuntado correctamente.'
@@ -153,10 +153,13 @@ class DocumentoAdjuntoService
         if ($type == 'form-1') {
             $menu->formulario_1_anexo = true;
             $menu->formulario_2 = false;
-            
-        } elseif ($type == 'form-3') {
-            $menu->sigep_anexo = true;
+
         }
+
+        /* elseif ($type == 'form-3') {
+            $menu->sigep_anexo = true;
+        } */
+
         $menu->save();
         $menu->refresh();
         $items = config('menu_pestanias');
