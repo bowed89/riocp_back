@@ -25,7 +25,7 @@ class ObservacionDgaftService
             ->join('observaciones as ob', 'tobs.id', '=', 'ob.tipo_observacion_id')
             ->select('tobs.observacion as tipo_observacion', 'tobs.enumeracion', 'ob.observacion', 'ob.cumple', 'tobs.id as tipo_observacion_id' )
             ->where('ob.solicitud_id', $solicitudId)
-            ->where('ob.rol_id', 4) // obtengo del rol revisor
+            ->where('ob.rol_id', 2) // obtengo del rol jefe unidad
             ->orderBy('tobs.enumeracion', 'asc')
             ->get();
 

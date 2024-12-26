@@ -50,7 +50,7 @@ class GenerarNotaRechazoRiocp
 
     public function Referencia()
     {
-        return 'Ref.:' . "\n" . 'Certificado de Registro de Inicio de Operaciones de Crédito Público';
+        return 'Ref.:' . 'Certificado de Registro de Inicio de Operaciones de Crédito Público';
     }
 
     public function body($solicitudId, $sd, $vpd)
@@ -60,7 +60,7 @@ class GenerarNotaRechazoRiocp
         $objetoOperacion = ucwords(strtolower($consulta->objeto_operacion_credito));
         $acreedor = ucwords(strtolower($consulta->nombre_acreedor));
 
-        // verifico si estoy dentro de rangos de 
+        // verifico si estoy dentro de rangos de
         // Servicio Deuda y Valor Presente Deuda Total
         $servicioDeuda = (float)$sd;
         $valorPresenteDeuda = (float)$vpd;
@@ -71,10 +71,10 @@ class GenerarNotaRechazoRiocp
         Log::debug("Servicio Deuda => " . $servicioDeuda);
 
         if ($valorPresenteDeuda > 200 && $servicioDeuda < 20.00) {
-            $motivoRechazo = 'indicador de 
+            $motivoRechazo = 'indicador de
             Valor Presente de la Deuda total supera el límite establecido en la Ley N° 2042 de Administración Presupuestaria (200%)';
         } elseif ($servicioDeuda > 20.00 && $valorPresenteDeuda < 200) {
-            $motivoRechazo = 'indicador del Servicio de Deuda supera 
+            $motivoRechazo = 'indicador del Servicio de Deuda supera
             el límite establecido en la Ley N° 2042 de Administración Presupuestaria (20%)';
         } elseif ($servicioDeuda > 20.00 && $valorPresenteDeuda > 200) {
             $motivoRechazo = 'indicador del Servicio de Deuda y el Valor Presente
@@ -87,16 +87,16 @@ class GenerarNotaRechazoRiocp
         return '
         De mi consideración:
         Cursa en este despacho la nota ' . $consulta->cite_documento . ' de ' . $fechaCorrespondencia . ',
-        mediante la cual el ' . $consulta->denominacion . ', solicita 
+        mediante la cual el ' . $consulta->denominacion . ', solicita
         el certificado de Registro de Inicio de Operaciones de Crédito Público en el marco
-        de la Resolución Ministerial N° 338 de 29 de septiembre de 2022, que aprueba el 
+        de la Resolución Ministerial N° 338 de 29 de septiembre de 2022, que aprueba el
         “Reglamento Específico para el Registro de Inicio de Operaciones de Crédito Público
-        para Proyectos de Inversión Pública” modificada mediante 
-        Resolución Ministerial N° 006 de 10 de enero de 2024, para la contratación de un nuevo 
+        para Proyectos de Inversión Pública” modificada mediante
+        Resolución Ministerial N° 006 de 10 de enero de 2024, para la contratación de un nuevo
         endeudamiento destinado a la ' . $objetoOperacion . ',
         a ser financiado por el' . $acreedor . '.
-        Al respecto, cabe señalar que, en el marco de la normativa vigente, 
-        con la inclusión del trámite solicitado por su entidad, el' . $motivoRechazo . ' , 
+        Al respecto, cabe señalar que, en el marco de la normativa vigente,
+        con la inclusión del trámite solicitado por su entidad, el' . $motivoRechazo . ' ,
         mientras dicho indicador no se encuentre dentro del límite mencionado, el GAM ARA en la presente
         gestión no está en condiciones de asumir la nueva obligación de endeudamiento público para el citado proyecto.
         Con este motivo, saludo a usted atentamente.';

@@ -57,7 +57,7 @@
             margin-bottom: 20px;
         }
 
-        .header .reference {
+        .header {
             margin: 0;
             font-size: 14px;
         }
@@ -121,22 +121,28 @@
 
         <!-- Encabezado -->
         <div class="header">
-            <p class="location">La Paz,dfdfdfd</p>
-            <p class="reference"><strong>MEFP/VICP/DGAFT/USCTF/N°1228/2024</strong></p>
+            <p class="location">{!! $datos['fecha'] ?? '' !!}</p>
+            <p class="reference"><strong>{!! $datos['nro_nota'] ?? '' !!}</strong></p>
         </div>
 
         <!-- Saludo -->
-        <div class="recipient">
+        {{-- <div class="recipient">
             <p>Señor</p>
             <p class="name">Jhonny Fernández Saucedo</p>
             <p>Alcalde</p>
             <p class="entity"><strong>GOBIERNO AUTÓNOMO MUNICIPAL DE SANTA CRUZ DE LA SIERRA</strong></p>
             <p class="location"><em>Santa Cruz</em></p>
+        </div> --}}
+
+        <div class="recipient">
+            {!! $datos['header'] ?? '' !!}
         </div>
 
         <!-- Asunto -->
         <div class="subject">
-            <p><strong>Ref.:</strong> Certificado de Registro de Inicio de Operaciones de Crédito Público</p>
+            {{-- <p><strong>Ref.:</strong> Certificado de Registro de Inicio de Operaciones de Crédito Público</p> --}}
+
+            <p>{!! $datos['referencia'] ?? '' !!}</p>
         </div>
 
         <!-- Contenido -->
@@ -148,9 +154,11 @@
 
         <!-- Pie de página -->
         <div class="footer">
-            <p>H.E.: 2024-5578-2</p>
+          {{--   <p>H.E.: 2024-5578-2</p>
             <p>TAE/JEV/ANAYA</p>
-            <p>Adj.: Lo indicado</p>
+            <p>Adj.: Lo indicado</p> --}}
+
+            {!! $datos['revisado'] ?? '' !!}
         </div>
     </div>
 

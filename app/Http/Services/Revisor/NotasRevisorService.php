@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Http\Services\Dgaft;
+namespace App\Http\Services\Revisor;
 
-use App\Models\Observacion;
 use App\Models\Solicitud;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class NotasDgaftService
+class NotasRevisorService
 {
-    public function verNotasDgaft($solicitudId)
+    public function verNotasRevisor($solicitudId)
     {
         $user = Auth::user();
         if (!$user) {
@@ -39,7 +38,7 @@ class NotasDgaftService
         $notas = DB::table('notas_certificado_riocp AS n')
             ->join('certificados_riocp AS c', 'n.certificado_riocp_id', '=', 'c.id')
             ->join('solicitudes AS s', 'c.solicitud_id', '=', 's.id')
-            ->where('n.rol_id', 2) // rol de jefe unidad
+            ->where('n.rol_id', 3) // rol de  tecnico
             ->where('s.id', $solicitudId)
             ->select([
                 'n.fecha',

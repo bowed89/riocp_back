@@ -13,6 +13,7 @@ use App\Http\Controllers\Operador\CertificadoRiocpController;
 use App\Http\Controllers\Operador\NotaRiocpController;
 use App\Http\Controllers\Operador\ObservacionTecnicoController;
 use App\Http\Controllers\Operador\SeguimientoOperadorController;
+use App\Http\Controllers\Revisor\NotasRevisorController;
 use App\Http\Controllers\Revisor\ObservacionRevisorController;
 use App\Http\Controllers\Revisor\SeguimientoRevisorController;
 use App\Http\Controllers\Revisor\SubirHistorialExcelController;
@@ -53,7 +54,7 @@ Route::post('email/send', [CorreoController::class, 'sendEmail']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    // Administrador 
+    // Administrador
     Route::middleware('rol:7')->group(function () {
         Route::resource('roles', RolController::class);
         Route::put('roles/delete/{id}', [RolController::class, 'deleteRol']);
@@ -129,7 +130,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/nota-aprobado-certificado-riocp/{solicitudId}', [NotaRiocpController::class, 'obtenerDatosNotaAprobacion']);
         Route::get('/nota-observacion-certificado-riocp/{solicitudId}', [NotaRiocpController::class, 'obtenerDatosNotaObervacion']);
         Route::get('/nota-rechazo-certificado-riocp/{solicitudId}/{sd}/{vpd}', [NotaRiocpController::class, 'obtenerDatosNotaRechazo']);
-            
+
         Route::resource('tipo-errores', TipoErroresRevisionController::class);
 
     });
@@ -151,6 +152,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('import/fndr-excel', [FndrExcelController::class, 'fndrExcel']);
         Route::post('import/balance-general', [BalanceGeneralExcelController::class, 'balanceGeneralExcel']);
         Route::post('import/icr-eta', [PromedioIcrEtaController::class, 'icrEtaExcel']);
+
+        // ver notas
+        Route::get('usuario/revisor/notas-observacion/{solicitudId}', [NotasRevisorController::class, 'verNotasRevisor']);
+
     });
 
     // DGAFT y Administrador
