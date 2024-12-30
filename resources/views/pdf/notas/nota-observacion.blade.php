@@ -9,10 +9,10 @@
 
     <style>
         @media print {
-
             body,
             html {
-                margin: 0;
+                margin-left: 10px;
+                margin-right: 10px;
                 /* Elimina márgenes del body y html */
                 padding: 0;
                 /* Elimina padding del body y html */
@@ -33,12 +33,11 @@
         /* General */
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
             padding: 0;
             line-height: 1.5;
             color: #000;
             background-color: #f5f5f5;
-
+            font-size: 16px;
         }
 
         /* Contenedor principal */
@@ -54,50 +53,48 @@
         /* Encabezado */
         .header {
             text-align: start;
-            margin-bottom: 20px;
-        }
-
-        .header {
             margin: 0;
-            font-size: 14px;
         }
 
-        /* Destinatario */
+
         .recipient {
-            margin-bottom: 20px;
+            margin-top: 20px;
         }
 
-        .recipient .name {
-            font-weight: bold;
-        }
-
-        .recipient .entity {
-            margin: 5px 0;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .recipient .location {
-            font-style: italic;
-        }
 
         /* Asunto */
         .subject {
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             font-weight: bold;
+            display: flex;
+            justify-content: end;
+
+            max-width: 300px;
+            /* Ajusta el ancho para dividir las líneas */
+            white-space: normal;
+            word-break: break-word;
+            /* Divide palabras si es necesario */
+
+            /* Permite que el ancho respete el contenido */
+            margin-left: auto;
+            /* Empuja el elemento hacia la derecha */
         }
+
 
         /* Contenido del cuerpo */
         .body {
             text-align: justify;
             text-align-last: justify;
-            margin-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        p {
+            margin-bottom: 30px;
         }
 
         /* Pie de página */
         .footer {
             margin-top: 30px;
-            font-size: 12px;
             text-align: left;
         }
 
@@ -117,26 +114,14 @@
 
 <body>
     <div class="document-container">
-
-
-
         <!-- Encabezado -->
         <div class="header">
-            <p class="location">{!! $datos['fecha'] ?? '' !!}</p>
-            <p class="reference"><strong>{!! $datos['nro_nota'] ?? '' !!}</strong></p>
+            <div>{!! $datos['fecha'] ?? '' !!}</div>
+            <strong>{!! $datos['nro_nota'] ?? '' !!}</strong>
         </div>
 
-        <!-- Saludo -->
-        {{-- <div class="recipient">
-            <p>Señor</p>
-            <p class="name">Jhonny Fernández Saucedo</p>
-            <p>Alcalde</p>
-            <p class="entity"><strong>GOBIERNO AUTÓNOMO MUNICIPAL DE SANTA CRUZ DE LA SIERRA</strong></p>
-            <p class="location"><em>Santa Cruz</em></p>
-        </div> --}}
-
         <div class="recipient">
-            {!! $datos['header'] ?? '' !!}
+            {!! $datos['header'] ?? '' !!} desde aquii
         </div>
 
         <!-- Asunto -->
@@ -147,22 +132,20 @@
         </div>
 
         <!-- Contenido -->
+        <p>De mi consideración:</p>
         <div class="body">
             {{-- {{ $datos['body'] ?? '' }} --}}
             {!! $datos['body'] ?? '' !!}
-
         </div>
+        <p>Con este motivo, saludo a usted atentamente.</p>
 
         <!-- Pie de página -->
         <div class="footer">
-            {{--   <p>H.E.: 2024-5578-2</p>
-            <p>TAE/JEV/ANAYA</p>
-            <p>Adj.: Lo indicado</p> --}}
+
 
             {!! $datos['revisado'] ?? '' !!}
         </div>
     </div>
-
 
 </body>
 
