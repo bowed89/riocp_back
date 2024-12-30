@@ -8,6 +8,7 @@ use App\Http\Controllers\Excel\BalanceGeneralExcelController;
 use App\Http\Controllers\Excel\DeudaPublicaExternaController;
 use App\Http\Controllers\Excel\FndrExcelController;
 use App\Http\Controllers\Excel\PromedioIcrEtaController;
+use App\Http\Controllers\JefeUnidad\NotasJefeUnidadController;
 use App\Http\Controllers\JefeUnidad\VerObservacionRevisorController;
 use App\Http\Controllers\Operador\CertificadoRiocpController;
 use App\Http\Controllers\Operador\NotaRiocpController;
@@ -73,6 +74,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/seguimiento/administrador/store', [SeguimientoJefeUnidadController::class, 'asignarTecnicoRevisor']);
         Route::get('/seguimiento/administrador/count-asignado', [SeguimientoJefeUnidadController::class, 'contadorAsignado']);
         Route::resource('seguimiento', SeguimientoJefeUnidadController::class);
+        // ver nota
+        Route::get('usuario/jefe-unidad/notas-observacion/{solicitudId}', [NotasJefeUnidadController::class, 'verNotasJefeUnidad']);
+
     });
 
     // Jefe Unidad y solicitante

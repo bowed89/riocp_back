@@ -90,6 +90,7 @@
         /* Contenido del cuerpo */
         .body {
             text-align: justify;
+            text-align-last: justify;
             margin-bottom: 10px;
         }
 
@@ -154,7 +155,7 @@
 
         <!-- Pie de página -->
         <div class="footer">
-          {{--   <p>H.E.: 2024-5578-2</p>
+            {{--   <p>H.E.: 2024-5578-2</p>
             <p>TAE/JEV/ANAYA</p>
             <p>Adj.: Lo indicado</p> --}}
 
