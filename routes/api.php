@@ -164,8 +164,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // DGAFT y Administrador
     Route::middleware('rol:5.4.2')->group(function () {
+        Route::get('usuario/vctp', [AuthController::class, 'getVCTP']);
+
         Route::get('usuario/dgaft/{solicitudId}', [ObservacionDgaftController::class, 'verObservacionIdSolicitud']);
         Route::get('usuario/dgaft/notas-observacion/{solicitudId}', [NotasDgaftController::class, 'verNotasDgaft']);
+    });
+
+    // VCTP y Administrador
+    Route::middleware('rol:6.2')->group(function () {
+     //   Route::get('usuario/vctp', [AuthController::class, 'getVCTP']);
+        
     });
 
     // todos roles

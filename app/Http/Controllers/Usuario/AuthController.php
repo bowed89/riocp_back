@@ -126,6 +126,23 @@ class AuthController extends Controller
     }
 
 
+    public function getVCTP()
+    {
+        $usuarios = Usuario::where('rol_id', 6)->get();
+
+        if (!$usuarios) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Usuario DGAFT no encontrado.'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'data' => $usuarios
+        ]);
+    }
+
 
     public function getJefeUnidad()
     {

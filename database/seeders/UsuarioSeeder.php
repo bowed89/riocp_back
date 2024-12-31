@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -18,7 +19,7 @@ class UsuarioSeeder extends Seeder
                 'correo' => 'solicitante@gmail.com',
                 'nombre_usuario' => 'juan.solicitante',
                 'ci' => 98008716,
-                'password' => Hash::make('solicitante123'), 
+                'password' => Hash::make('solicitante123'),
                 'estado' => true,
                 'rol_id' => 1,
                 'entidad_id' => 1434,
@@ -29,7 +30,7 @@ class UsuarioSeeder extends Seeder
                 'correo' => 'solicitante2@gmail.com',
                 'nombre_usuario' => 'martha.sanchez',
                 'ci' => 48008716,
-                'password' => Hash::make('solicitante123'), 
+                'password' => Hash::make('solicitante123'),
                 'estado' => true,
                 'rol_id' => 1,
                 'entidad_id' => 1109,
@@ -40,7 +41,7 @@ class UsuarioSeeder extends Seeder
                 'correo' => 'jefe.unidad@gmail.com',
                 'nombre_usuario' => 'maria.admin',
                 'ci' => 34555233,
-                'password' => Hash::make('jefeunidad123'), 
+                'password' => Hash::make('jefeunidad123'),
                 'estado' => true,
                 'rol_id' => 2,
                 'entidad_id' => null,
@@ -92,8 +93,7 @@ class UsuarioSeeder extends Seeder
                 'estado' => true,
                 'rol_id' => 5,
                 'entidad_id' => null,
-            ]
-            ,
+            ],
             [
                 'nombre' => 'Jesus',
                 'apellido' => 'Ramallo',
@@ -103,6 +103,17 @@ class UsuarioSeeder extends Seeder
                 'password' => Hash::make('admin123'),
                 'estado' => true,
                 'rol_id' => 7,
+                'entidad_id' => null,
+            ],
+            [
+                'nombre' => 'Daniela',
+                'apellido' => 'Estevez',
+                'correo' => 'vtcp@gmail.com',
+                'nombre_usuario' => 'daniela.estevez',
+                'ci' => 6700966,
+                'password' => Hash::make('vtcp123'),
+                'estado' => true,
+                'rol_id' => 6,
                 'entidad_id' => null,
             ]
         ]);
